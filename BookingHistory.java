@@ -1,6 +1,9 @@
+import java.io.Serializable;
 import java.util.*;
 
-public class BookingHistory {
+public class BookingHistory implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private List<Reservation> history = new ArrayList<>();
 
@@ -12,18 +15,14 @@ public class BookingHistory {
         return history;
     }
 
-    // NEW: check existence
-    public boolean exists(String id) {
-        for (Reservation r : history) {
-            if (r.getReservationId().equals(id)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public void displayHistory() {
         System.out.println("\n=== Booking History ===");
+
+        if (history.isEmpty()) {
+            System.out.println("No bookings available.");
+            return;
+        }
+
         for (Reservation r : history) {
             System.out.println(r);
         }

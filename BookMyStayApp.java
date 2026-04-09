@@ -1,99 +1,63 @@
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class BookMyStayApp {
+
     public static void main(String[] args) {
 
-        System.out.println("Welcome to BookMyStay - Hotel Booking System v8.0");
+        System.out.println("Hotel Booking System - UC12 (Persistence)");
 
-        // Rooms
-        Room single = new SingleRoom(0);
-        Room doubleR = new DoubleRoom(0);
-        Room suite = new SuiteRoom(0);
+        PersistenceService persistence = new PersistenceService();
 
-        // Inventory
-        RoomInventory inventory = new RoomInventory();
-        inventory.addRoomType(single.roomType, 5);
-        inventory.addRoomType(doubleR.roomType, 3);
-        inventory.addRoomType(suite.roomType, 2);
+        BookingHistory history;
+        RoomInventory inventory;
 
-        // Queue
-        BookingRequestQueue bookingQueue = new BookingRequestQueue();
+        // ---------------------------
+        // LOAD PREVIOUS STATE
+        // ---------------------------
+        Object[] state = persistence.loadState();
 
-        bookingQueue.addRequest(new Reservation("Alice", "Single Room"));
-        bookingQueue.addRequest(new Reservation("Bob", "Suite Room"));
-        bookingQueue.addRequest(new Reservation("Charlie", "Double Room"));
-        bookingQueue.addRequest(new Reservation("David", "Single Room"));
-        bookingQueue.addRequest(new Reservation("Eve", "Single Room"));
+        if (state != null) {
+            history = (BookingHistory) state[0];
+            inventory = (RoomInventory) state[1];
+        } else {
+            history = new BookingHistory();
+            inventory = new RoomInventory();
 
-        bookingQueue.displayQueue();
+            inventory.addRoomType("Single Room", 2);
+            inventory.addRoomType("Double Room", 2);
+        }
 
-        // ✅ UC8 History
-        BookingHistory history = new BookingHistory();
+        // ---------------------------
+        // NEW BOOKINGS
+        // ---------------------------
+        BookingRequestQueue queue = new BookingRequestQueue();
 
-        // UC6 + UC8 Service
-        ReservationService service = new ReservationService(inventory, bookingQueue, history);
+        queue.addRequest(new Reservation("Alice", "Single Room"));
+        queue.addRequest(new Reservation("Bob", "Double Room"));
+
+        // Validator
+        Set<String> valid = new HashSet<>();
+        valid.add("Single Room");
+        valid.add("Double Room");
+
+        BookingValidator validator = new BookingValidator(valid);
+
+        ReservationService service =
+                new ReservationService(inventory, queue, history, validator);
+
         service.processReservations();
 
-        // Display Inventory
+        // ---------------------------
+        // DISPLAY STATE
+        // ---------------------------
         inventory.displayInventory();
-
-        // Display History
         history.displayHistory();
 
-        // Reports
-        BookingReportService reportService = new BookingReportService(history);
-        reportService.generateSummary();
-        reportService.generateRoomTypeReport();
         // ---------------------------
-// UC10 - Cancellation
-// ---------------------------
-CancellationService cancelService =
-        new CancellationService(inventory, history);
+        // SAVE STATE BEFORE EXIT
+        // ---------------------------
+        persistence.saveState(history, inventory);
 
-if (!history.getAllReservations().isEmpty()) {
-
-    String cancelId =
-            history.getAllReservations().get(0).getReservationId();
-
-    System.out.println("\nAttempting Cancellation for ID: " + cancelId);
-
-    cancelService.cancelReservation(cancelId);
-}
-
-// Final state
-inventory.displayInventory();
-history.displayHistory();
-// ---------------------------
-// UC11 - Concurrent Simulation
-// ---------------------------
-
-System.out.println("\nStarting Concurrent Booking Simulation...\n");
-
-// Create multiple threads
-ConcurrentBookingProcessor t1 =
-        new ConcurrentBookingProcessor(service);
-
-ConcurrentBookingProcessor t2 =
-        new ConcurrentBookingProcessor(service);
-
-ConcurrentBookingProcessor t3 =
-        new ConcurrentBookingProcessor(service);
-
-// Start threads
-t1.start();
-t2.start();
-t3.start();
-
-// Wait for completion
-try {
-    t1.join();
-    t2.join();
-    t3.join();
-} catch (InterruptedException e) {
-    e.printStackTrace();
-}
-
-System.out.println("\nConcurrent Processing Completed.\n");
+        System.out.println("\nSystem shutdown complete.");
     }
 }
