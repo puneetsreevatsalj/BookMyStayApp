@@ -2,32 +2,28 @@ import java.util.*;
 
 public class BookingHistory {
 
-    // List to store confirmed reservations (ordered)
-    private List<Reservation> history;
+    private List<Reservation> history = new ArrayList<>();
 
-    public BookingHistory() {
-        history = new ArrayList<>();
+    public void addReservation(Reservation r) {
+        history.add(r);
     }
 
-    // Add confirmed booking
-    public void addReservation(Reservation reservation) {
-        history.add(reservation);
-    }
-
-    // Get all reservations
     public List<Reservation> getAllReservations() {
         return history;
     }
 
-    // Display history
+    // NEW: check existence
+    public boolean exists(String id) {
+        for (Reservation r : history) {
+            if (r.getReservationId().equals(id)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void displayHistory() {
         System.out.println("\n=== Booking History ===");
-
-        if (history.isEmpty()) {
-            System.out.println("No bookings found.");
-            return;
-        }
-
         for (Reservation r : history) {
             System.out.println(r);
         }
