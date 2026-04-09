@@ -1,28 +1,29 @@
+import java.util.HashMap;
+import java.util.Map;
+
 public class BookMyStayApp {
     public static void main(String[] args) {
-        System.out.println("Welcome to BookMyStay - Hotel Booking System v3.0");
+        System.out.println("Welcome to BookMyStay - Hotel Booking System v4.0");
 
-        Room single = new SingleRoom(0); // availability now managed centrally
+        // Initialize rooms
+        Room single = new SingleRoom(0);
         Room doubleR = new DoubleRoom(0);
         Room suite = new SuiteRoom(0);
 
+        // Initialize centralized inventory
         RoomInventory inventory = new RoomInventory();
         inventory.addRoomType(single.roomType, 5);
-        inventory.addRoomType(doubleR.roomType, 3);
+        inventory.addRoomType(doubleR.roomType, 0); // simulate unavailable
         inventory.addRoomType(suite.roomType, 2);
 
-        // Display room details
-        System.out.println("\nRoom Details:");
-        single.displayRoomDetails();
-        doubleR.displayRoomDetails();
-        suite.displayRoomDetails();
+        // Map for easy access
+        Map<String, Room> rooms = new HashMap<>();
+        rooms.put(single.roomType, single);
+        rooms.put(doubleR.roomType, doubleR);
+        rooms.put(suite.roomType, suite);
 
-        // Display centralized inventory
-        inventory.displayInventory();
-
-        // Example of updating inventory
-        inventory.updateAvailability("Single Room", 4);
-        System.out.println("\nInventory after booking 1 Single Room:");
-        inventory.displayInventory();
+        // Search service
+        RoomSearchService searchService = new RoomSearchService(inventory);
+        searchService.searchAvailableRooms(rooms);
     }
 }
