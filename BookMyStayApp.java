@@ -64,5 +64,36 @@ if (!history.getAllReservations().isEmpty()) {
 // Final state
 inventory.displayInventory();
 history.displayHistory();
+// ---------------------------
+// UC11 - Concurrent Simulation
+// ---------------------------
+
+System.out.println("\nStarting Concurrent Booking Simulation...\n");
+
+// Create multiple threads
+ConcurrentBookingProcessor t1 =
+        new ConcurrentBookingProcessor(service);
+
+ConcurrentBookingProcessor t2 =
+        new ConcurrentBookingProcessor(service);
+
+ConcurrentBookingProcessor t3 =
+        new ConcurrentBookingProcessor(service);
+
+// Start threads
+t1.start();
+t2.start();
+t3.start();
+
+// Wait for completion
+try {
+    t1.join();
+    t2.join();
+    t3.join();
+} catch (InterruptedException e) {
+    e.printStackTrace();
+}
+
+System.out.println("\nConcurrent Processing Completed.\n");
     }
 }
