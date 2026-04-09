@@ -32,6 +32,10 @@ public class ReservationService {
 
                 System.out.println("Booking Confirmed for " + request.getGuestName());
                 System.out.println("Allocated Room ID: " + roomId);
+                System.out.println("Booking Confirmed!");
+                System.out.println("Reservation ID: " + request.getReservationId());
+                System.out.println("Guest: " + request.getGuestName());
+                System.out.println("Allocated Room ID: " + roomId);
 
             } else {
                 System.out.println("Booking Failed - No rooms available for " + roomType);
