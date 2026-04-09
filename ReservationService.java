@@ -45,6 +45,23 @@ public class ReservationService {
             }
         }
     }
+    synchronized (inventory) {
+
+    if (inventory.isAvailable(roomType)) {
+
+        String roomId = generateRoomId(roomType);
+
+        allocatedRooms.putIfAbsent(roomType, new HashSet<>());
+        allocatedRooms.get(roomType).add(roomId);
+
+        inventory.decrement(roomType);
+
+        history.addReservation(request);
+
+        System.out.println(Thread.currentThread().getName() +
+                " confirmed booking for " + request.getGuestName());
+    }
+}
     public String getRoomId(String reservationId) {
     return reservationRoomMap.get(reservationId);
 }

@@ -30,15 +30,19 @@ public class RoomInventory {
     }
 
 
-    public boolean isAvailable(String roomType) {
-        return getAvailability(roomType) > 0;
+    public synchronized boolean isAvailable(String roomType) {
+    return getAvailability(roomType) > 0;
+}
+
+
+    public synchronized void decrement(String roomType) throws InvalidBookingException {
+    int current = getAvailability(roomType);
+
+    if (current <= 0) {
+        throw new InvalidBookingException("No rooms available for " + roomType);
     }
 
-
-    public void decrement(String roomType) {
-        int current = getAvailability(roomType);
-        if (current > 0) {
-            updateAvailability(roomType, current - 1);
-        }
+    updateAvailability(roomType, current - 1);
+}
     }
 }

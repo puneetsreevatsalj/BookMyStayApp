@@ -8,22 +8,26 @@ public class BookingRequestQueue {
         queue = new LinkedList<>();
     }
 
-    public void addRequest(Reservation reservation) {
-        queue.add(reservation);
-        System.out.println("Added booking request: " + reservation);
-    }
+    // synchronized enqueue
+public synchronized void addRequest(Reservation reservation) {
+    queue.add(reservation);
+    System.out.println(Thread.currentThread().getName() +
+            " added: " + reservation);
+}
 
     public Reservation nextRequest() {
         return queue.peek();
     }
 
-    public Reservation processNext() {
-        return queue.poll();
-    }
+    // synchronized dequeue
+public synchronized Reservation processNext() {
+    return queue.poll();
+}
 
-    public boolean isEmpty() {
-        return queue.isEmpty();
-    }
+    // synchronized check
+public synchronized boolean isEmpty() {
+    return queue.isEmpty();
+}
 
     public void displayQueue() {
         System.out.println("\nCurrent Booking Requests in Queue:");
