@@ -45,5 +45,24 @@ public class BookMyStayApp {
         BookingReportService reportService = new BookingReportService(history);
         reportService.generateSummary();
         reportService.generateRoomTypeReport();
+        // ---------------------------
+// UC10 - Cancellation
+// ---------------------------
+CancellationService cancelService =
+        new CancellationService(inventory, history);
+
+if (!history.getAllReservations().isEmpty()) {
+
+    String cancelId =
+            history.getAllReservations().get(0).getReservationId();
+
+    System.out.println("\nAttempting Cancellation for ID: " + cancelId);
+
+    cancelService.cancelReservation(cancelId);
+}
+
+// Final state
+inventory.displayInventory();
+history.displayHistory();
     }
 }

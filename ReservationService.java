@@ -1,7 +1,7 @@
 import java.util.*;
 
 public class ReservationService {
-
+    private Map<String, String> reservationRoomMap = new HashMap<>();
     private RoomInventory inventory;
     private BookingRequestQueue queue;
     private BookingHistory history;
@@ -26,7 +26,7 @@ public class ReservationService {
             if (inventory.isAvailable(roomType)) {
 
                 String roomId = generateRoomId(roomType);
-
+                reservationRoomMap.put(request.getReservationId(), roomId);
                 allocatedRooms.putIfAbsent(roomType, new HashSet<>());
                 allocatedRooms.get(roomType).add(roomId);
 
@@ -45,7 +45,9 @@ public class ReservationService {
             }
         }
     }
-
+    public String getRoomId(String reservationId) {
+    return reservationRoomMap.get(reservationId);
+}
     private String generateRoomId(String roomType) {
         return roomType.substring(0, 2).toUpperCase() + "-" +
                UUID.randomUUID().toString().substring(0, 5);
