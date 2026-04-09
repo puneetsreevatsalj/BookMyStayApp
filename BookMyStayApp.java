@@ -36,6 +36,23 @@ public class BookMyStayApp {
 
         ReservationService service = new ReservationService(inventory, bookingQueue);
         service.processReservations();
+        
+        //Add-On Services
+AddOnServiceManager serviceManager = new AddOnServiceManager();
+
+// Example reservations (you can track IDs properly if needed)
+Reservation r1 = new Reservation("Alice", "Single Room");
+Reservation r2 = new Reservation("Bob", "Suite Room");
+
+// Add services
+serviceManager.addService(r1.getReservationId(), new AddOnService("Breakfast", 500));
+serviceManager.addService(r1.getReservationId(), new AddOnService("WiFi", 200));
+
+serviceManager.addService(r2.getReservationId(), new AddOnService("Airport Pickup", 1000));
+
+// Display services
+serviceManager.displayServices(r1.getReservationId());
+serviceManager.displayServices(r2.getReservationId());
 
         // Final inventory
         inventory.displayInventory();
