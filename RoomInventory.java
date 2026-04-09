@@ -28,4 +28,17 @@ public class RoomInventory {
             System.out.println(entry.getKey() + " : " + entry.getValue() + " rooms available");
         }
     }
+
+
+    public boolean isAvailable(String roomType) {
+        return getAvailability(roomType) > 0;
+    }
+
+
+    public void decrement(String roomType) {
+        int current = getAvailability(roomType);
+        if (current > 0) {
+            updateAvailability(roomType, current - 1);
+        }
+    }
 }
